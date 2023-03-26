@@ -1,48 +1,46 @@
-const http = require("http");
+const express = require("express");
+const path = require("path");
 const fs = require("fs");
+const app = express();
+const port = 3000;
 
-const server = http.createServer((req, res) => {
-  if (req.url === "/") {
-    fs.readFile("index.html", (err, data) => {
-      if (err) {
-        res.writeHead(500);
-        res.end("Error loading index.html");
-      } else {
-        res.writeHead(200);
-        res.end(data);
-      }
-    });
-  } else if (req.url === "/about") {
-    fs.readFile("about.html", (err, data) => {
-      if (err) {
-        res.writeHead(500);
-        res.end("Error loading about.html");
-      } else {
-        res.writeHead(200);
-        res.end(data);
-      }
-    });
-  } else if (req.url === "/contact-me") {
-    fs.readFile("contact-me.html", (err, data) => {
-      if (err) {
-        res.writeHead(500);
-        res.end("Error loading contact-me.html");
-      } else {
-        res.writeHead(200);
-        res.end(data);
-      }
-    });
-  } else {
-    fs.readFile("404.html", (err, data) => {
-      if (err) {
-        res.writeHead(500);
-        res.end("Error loading 404.html");
-      } else {
-        res.writeHead(404);
-        res.end(data);
-      }
-    });
-  }
+app.get("/", (req, res) => {
+  fs.readFile("./pages/index.html", (err, data) => {
+    if (err) {
+      res.writeHead(500);
+      res.end("Error loading index.html");
+    } else {
+      res.writeHead(200);
+      res.end(data);
+    }
+  });
 });
-
-server.listen(8080, () => console.log("Server running on port 8080"));
+app.get("/contact-me", (req, res) => {
+  fs.readFile("./pages/contact-me.html", (err, data) => {
+    if (err) {
+      res.writeHead(500);
+      res.end("Error loading contact-me.html");
+    } else {
+      res.writeHead(200);
+      res.end(data);
+    }
+  });
+});
+app.get("/about", (req, res) => {
+  fs.readFile("./pages/about.html", (err, data) => {
+    if (err) {
+      res.writeHead(500);
+      res.end("Error loading about.html");
+    } else {
+      res.writeHead(200);
+      res.end(data);
+    }
+  });
+});
+app.use((req, res, next) => {
+  res.status(404);
+  res.sendFile("404.html", { root: path.join(__dirname + "/pages") });
+});
+app.listen(port, () => {
+  console.log(`http://localhost:${port}/`);
+});
