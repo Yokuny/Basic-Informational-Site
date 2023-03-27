@@ -4,43 +4,35 @@ const fs = require("fs");
 const app = express();
 const port = 3000;
 
+function readFileAndSend(filePath, res) {
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      res.writeHead(500);
+      res.end(`Error loading ${filePath}`);
+    } else {
+      res.writeHead(200);
+      res.end(data);
+    }
+  });
+}
+
 app.get("/", (req, res) => {
-  fs.readFile("./pages/index.html", (err, data) => {
-    if (err) {
-      res.writeHead(500);
-      res.end("Error loading index.html");
-    } else {
-      res.writeHead(200);
-      res.end(data);
-    }
-  });
+  readFileAndSend("./pages/index.html", res);
 });
+
 app.get("/contact-me", (req, res) => {
-  fs.readFile("./pages/contact-me.html", (err, data) => {
-    if (err) {
-      res.writeHead(500);
-      res.end("Error loading contact-me.html");
-    } else {
-      res.writeHead(200);
-      res.end(data);
-    }
-  });
+  readFileAndSend("./pages/contact-me.html", res);
 });
+
 app.get("/about", (req, res) => {
-  fs.readFile("./pages/about.html", (err, data) => {
-    if (err) {
-      res.writeHead(500);
-      res.end("Error loading about.html");
-    } else {
-      res.writeHead(200);
-      res.end(data);
-    }
-  });
+  readFileAndSend("./pages/about.html", res);
 });
+
 app.use((req, res, next) => {
   res.status(404);
-  res.sendFile("404.html", { root: path.join(__dirname + "/pages") });
+  readFileAndSend("./pages/404.html", res);
 });
+
 app.listen(port, () => {
   console.log(`http://localhost:${port}/`);
 });
